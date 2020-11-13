@@ -18,6 +18,13 @@ The Discord API is your best friend, and I spent many hours mulling over it. htt
 
 This tutorial is also useful if you have no idea where to start: https://realpython.com/how-to-make-a-discord-bot-python/
 
+## Known Issues
+If a message is greater than 2000 characters, the HTTP request will fail. I tried to circumvent this with both a try-catch block in the class print function as well as Discord's on_error event, but neither solved it. So, hopefully your users send short messages.
+
+Channel names and IDs are hardcoded. This can be circumvented but then I'd have to mess with the progress message, and maybe there's channels you don't want to check when searching the whole server.
+
+Make sure the bot has read, send, and history permissions in each channel in the list.
+
 # Overview of Project Components
 ## Classes
 ### MostReactedTop5
