@@ -14,6 +14,8 @@ Those familiar with writing Discord bots will notice I actually don't use any bo
 ## Notes
 You **WILL** need to modify this code for it to work on your server. Namely, the token (obviously), the list of channel IDs, the list of channel names respective to the order of IDs, and the commands you want. I made it pretty straightforward in the prefilled stuff so you should be able to figure it out.
 
+!most_reacts_here and !most_reacts_all will work out of the box. Custom emoji searches will need to be programmed by you since I don't know what the names of them are.
+
 The Discord API is your best friend, and I spent many hours mulling over it. https://discordpy.readthedocs.io/en/latest/api.html#
 
 This tutorial is also useful if you have no idea where to start: https://realpython.com/how-to-make-a-discord-bot-python/
