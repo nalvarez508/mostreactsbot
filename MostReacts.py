@@ -200,14 +200,15 @@ async def printTop5(c, channel):
     await c[4].printResults(channel)
 
 #@bot.command()
-async def leave(): #Closes process
+async def leave():
     print(f'Leave command entered.')
-    await btt_channel.send('Goodbye...')
+    #await btt_channel.send('Goodbye...')
     await client.logout()
 @client.event
 async def on_error(event, *args, **kwargs):
     message = args[0] #Gets the message object
-    await channel.send('An error occurred. Most likely, this message exceeded 2000 characters and could not be retrieved.')
+    ch = client.get_channel(message.channel.id)
+    await ch.send('An error occurred. Most likely, this message exceeded 2000 characters and could not be retrieved.')
 
 @client.event
 async def on_message(message):
