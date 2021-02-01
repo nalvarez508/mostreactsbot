@@ -1,6 +1,8 @@
 # Most Reacts Bot
 Discord bot to tally up your top 5 reactions (in a channel, specific emoji, or overall).
 
+*NOTE: I work on a private version of the bot with more functionality. This version is only for reaction counting and has not been implemented with modules containing classes and Discord cogs. Code samples can be requested via email.*
+
 ## About Me
 I'm an undergraduate student at the University of Nevada, Reno majoring in Computer Science. Always enjoyed working with computers so it seemed like a natural choice. The first langauge I ever used was Python and then switched to C/C++, learning OOP and good practices, so in a sense I've come full circle. Without that base knowledge I'm sure this code would look (more) like bundles of spaghetti.
 
