@@ -115,7 +115,7 @@ async def reactionRanker(r, class_name, m, r_i):
 async def progressMessage(class_name, f, search_percent, z, type_search, ch_posts):
     if (class_name.has_specific_emoji): #Specific emoji, any channel
         if (f == 0): #First message sent
-            return (f'**Max :{class_name.emoji_name}: Reactions for Server** (loading... {search_percent}%)\nSearched {class_name.total_posts} posts, now checking #welcome')
+            return (f'**Max :{class_name.emoji_name}: Reactions for Server** (loading... {search_percent}%)\nSearched {class_name.total_posts} posts, now checking #{Channel_Names[z+1]}')
         elif (f == 1): #Mid search of channel message
             return (f'**Max :{class_name.emoji_name}: Reactions for Server** (loading... {math.trunc(100*search_percent)}%)\nSearched {class_name.total_posts+ch_posts} posts, now checking #{Channel_Names[z+1]}')
         elif (f==2): #Final message modified to just the title
@@ -129,7 +129,7 @@ async def progressMessage(class_name, f, search_percent, z, type_search, ch_post
             return (f'**Max Reactions for #{Channel_Names[z]}**\nSearched {class_name.total_posts} posts since 1/1/2020, {class_name.reacted_posts} of which had a total of {class_name.reaction_count} reactions.')
     elif (type_search == 2): #Any channel, any emoji
         if (f == 0): #First message sent
-            return (f'**Max Reactions for Server** (loading... {search_percent}%)\nSearched {class_name.total_posts} posts, now checking #welcome')
+            return (f'**Max Reactions for Server** (loading... {search_percent}%)\nSearched {class_name.total_posts} posts, now checking #{Channel_Names[z+1]}')
         elif (f == 1): #Mid search of channel message
             return (f'**Max Reactions for Server** (loading... {math.trunc(100*search_percent)}%)\nSearched {class_name.total_posts+ch_posts} posts, now checking #{Channel_Names[z+1]}')
         elif (f==2): #Final message modified to just the title
@@ -154,7 +154,10 @@ async def historySearch(z, class_name, search_percent, progress_id, channel, ch_
                     await reactionRanker(reaction, class_name, message, i)
         ch_posts += 1
     class_name[0].total_posts += ch_posts
-    print(f'Completed search of {ch_posts} in #{Channel_Names[z+1]}')
+    if z == len(Channel_Names)-1:
+      print(f'Completed search of {ch_posts} in #{Channel_Names[z]}')
+    else:
+      print(f'Completed search of {ch_posts} in #{Channel_Names[z+1]}')
 
 #Determines whether or not to search one channel or all of them
 async def discordSearch(z, class_name, type_search, r_ch): #Iterator, name of list of classes, type of search (0: One channel, any emoji, 1: Any channel, one emoji, 2: Any channel, any emoji), name of channel to search if type_search = 0, otherwise pass None
@@ -231,7 +234,7 @@ async def on_message(message):
 
         await discordSearch(y_iterator, CE_Ranks, 1, ch)
         channel = client.get_channel(message.channel.id)
-        await printTop5(Phi_Ranks, channel)
+        await printTop5(CE_Ranks, channel)
 
     #Unicode example
     if ((message.content == '!Command2NameHere') and (message.author.display_name == 'YourNickname')): #Checks one emoji in all channels, type_search = 1
