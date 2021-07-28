@@ -14,7 +14,7 @@ I had a problem. My Discord server wanted to give out awards for the posts with 
 Those familiar with writing Discord bots will notice I actually don't use any bot commands at all, it all falls under the client. This is because I had already written the working code using the client commands, and it did what I wanted, so I called it a day. If you take it upon yourself to refactor it using the bot commands instead of client events, please let me know. If I wanted to expand the functionality to do other things, that would greatly simplify things (namely, taking in arguments with the commands instead of hardcoding the string to check for).
 
 ## Notes
-You **WILL** need to modify this code for it to work on your server. Namely, the token (obviously), the list of channel IDs, the list of channel names respective to the order of IDs, and the commands you want. I made it pretty straightforward in the prefilled stuff so you should be able to figure it out.
+You **WILL** need to modify this code for it to work on your server. Namely, the token (obviously), the list of channel IDs, the list of channel names respective to the order of IDs, the search start date, and the commands you want. I made it pretty straightforward in the prefilled stuff so you should be able to figure it out.
 
 !most_reacts_here and !most_reacts_all will work out of the box. Custom emoji searches will need to be programmed by you since I don't know what the names of them are.
 
@@ -26,6 +26,11 @@ This tutorial is also useful if you have no idea where to start: https://realpyt
 Channel names and IDs are hardcoded. This can be circumvented but then I'd have to mess with the progress message, and maybe there's channels you don't want to check when searching the whole server.
 
 Make sure the bot has read, send, and history permissions in each channel in the list.
+
+## Update 7/27/21
+Greatly simplified adding new commands for the bot. I don't have the bot set up as an actual Bot type, because then I would have to get intents set up and potentially need the user to move the bot's role around in their server. This is meant as a quick tool for easy use.
+
+Additionally, functions have been condensed into discordSearch() so there are less variables being passed around.
 
 # Overview of Project Components
 ## Classes
@@ -67,7 +72,7 @@ After the search we set our channel again to the one the command was sent in and
 ### discordSearch
 What it does: Initializes variables needed for rest of functions, and begins searching based upon the value of `type_search`.
 
-*Arguments: z (int), class_name (List), type_search (int), r_ch (discord.Channel)*
+*Arguments: z (int), class_name (List), type_search (int)*
 
 Z represents our `y_iterator` and is how we keep track of where we're searching, and is used for progress messages.
 
@@ -75,14 +80,12 @@ Class Name is our list of classes. For progress messages, the first element is p
 
 Type Search has three values (0, 2). 0 is a search of one channel and non-zero is a search of the whole server. 1 represents a search for a specific emoji and 2 is a search for any emoji.
 
-Return channel is not used. Never coded it out.
-
 If we search the entire server, we send a progress message *with a percentage* and then start a loop through Channel_IDs. Each loop calls historySearch() and updates the progress message.
 
 ### progessMessage
 What it does: Sends or updates a message in Discord detailing the status of the search.
 
-*Arguments: class_name (MostReactedTop5), f (int), search_percent (int), z (int), type_search (int), ch_posts (int)*
+*Arguments: class_name (MostReactedTop5), f (int)*
 
 Class Name is the first element of our class list, which is where details about posts counted are stored.
 
@@ -101,13 +104,13 @@ The function creates an appropriate title, based on where and what it's searchin
 ### historySearch
 What it does: Runs Discord's channel search to provide a discord.Message iterator based upon the loops options. Read the Discord API (see: TextChannel) for information on the parameters you can set. In this case, it checks up to 22,000 posts per channel and if they are after January 1st, 2020.
 
-*Arguments: z (int), class_name (List), search_percent (int), progress_id (discord.Message), channel (discord.Channel), ch_posts (int), type_search (int)*
+*Arguments: ch_posts (int)*
 
 Z is our iterator.
 
 Class Name is our list of classes, as we need the list for reactionRanker().
 
-Search percent is needed for progressMessage().
+Search percent is needed for progressMessage(). Based upon the length of `Channel_Names` and the value of our iterator `z`.
 
 Progress ID is the message we need to update. Calls progressMessage().
 
@@ -122,13 +125,13 @@ This function is built around if-else statements. First, we check our iterator (
 ### reactionRanker
 What it does: Compares our reaction count on the message to what is stored in our class objects, and assigns it to an object if necessary.
 
-*Arguments: r (discord.Reaction), class_name (List), m (discord.Message), r_i (discord.Reaction)*
+*Arguments: reaction (discord.Reaction), message (discord.Message), r_i (discord.Reaction)*
 
-R is for reaction, and it's the current reaction we're looking at.
+Reaction is the current reaction we're looking at.
 
 Class name is our list of classes.
 
-M is for message, and it's the current message we're looking at.
+Message is the current message we're looking at.
 
 Reaction Iterator, also known as `i`, functions like `r` and is redundant but the code works so I kept it.
 
@@ -155,15 +158,6 @@ Same as above, except the class name is a singular object and not a list now.
 
 All we're doing here is copying over relevant information from the message.
 
-### classFixup
-What it does: Fixes post rankings as when we use copy.deepcopy() in reactionRanker(), the rankings also get copied.
-
-*Arguments: c (List)*
-
-C is our list of classes.
-
-This function is deprecated and has been incorporated into printTop5().
-
 ### printTop5
 What it does: Fixes rankings and calls each class object's printResults() function to send a message to the server.
 
@@ -172,3 +166,18 @@ What it does: Fixes rankings and calls each class object's printResults() functi
 C is our list of classes.
 
 Channel is the channel we want to send the message in, which was sent in from the command function body.
+
+### prepareSearch
+What it does: Creates class objects to store our top 5 results and begins the search. This condenses what previously needed to be done by hand, each time, for each new command that the user creates.
+
+*Arguments: message (discord.Message), y_iterator (int), emoji (str or None), flag (int), type (int)*
+
+Message is the message that the command is sent in.
+
+Y_iterator tells us where to start the search.
+
+Emoji is the emoji we are searching for. A string of a custom discord emoji's name, a unicode emoji, or None if we are not searching for a specific emoji.
+
+Flag is whether or not we're searching for a specific emoji or not. 1 for yes, 0 for no.
+
+Type is the type of search. Explained within file.
